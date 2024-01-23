@@ -1,3 +1,4 @@
+const req = require("express/lib/request");
 const doctor = require("../models/doctor");
 
 exports.doctorLogin = async (req, res) => {
@@ -51,7 +52,17 @@ exports.upadteDoctor = async (req, res) => {
 exports.getalld = async (req, res) => {
   console.log("sdsd");
   try {
-    const doctors = await doctor.find().exec();
+    const doctors = await doctor.find({isDoctor:true,isverified:true}).limit(4).exec();
+    res.json(doctors);
+  } catch (error) {
+    return res.status(400).json({ error });
+  }
+};
+
+exports.getalladmin = async (req, res) => {
+  console.log("sdsd");
+  try {
+    const doctors = await doctor.find({isDoctor:true}).exec();
     res.json(doctors);
   } catch (error) {
     return res.status(400).json({ error });
@@ -67,3 +78,29 @@ exports.getdocByid = async (req, res) => {
     res.status(400).send(err.message);
   }
 };
+
+
+exports.deletedoctor = async(req,res) =>{
+  try {
+    const deletedoctor = await doctor.deleteOne({doctor:req.params.id},{accountStatus:"cancelled"}).exec();
+    res.json(deletedoctor) ;
+  } catch (error) {
+     console.log(error)
+  }
+  
+  }
+
+ 
+  exports.acceptAccount = async(req,res) =>{
+    try {
+      console.log(req.params.id)
+      const updateBook = await doctor.findByIdAndUpdate(req.params.id,{isverified:true},{new:true}).exec() 
+      res.json(updateBook) 
+      console.log(updateBook)
+      
+    } catch (error) {
+          console.log("zeae")
+    
+        console.log(error)
+    }
+  }

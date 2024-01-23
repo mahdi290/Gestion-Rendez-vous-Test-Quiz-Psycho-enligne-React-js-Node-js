@@ -1,16 +1,15 @@
 const book = require("../models/book");
-var sid  = "AC84adcb8715ca8c643d9f3e539aa77d79"
-var auth_token ="2a75ef3b06c4a333cadde798fc0f31a7"
+var sid  = "AC8485cd06c5ba2894a6446b60599e9021"
+var auth_token ="87f4f60114312c52a3156671932c3c9c"
 
 var twilio = require("twilio")(sid,auth_token)
 
 exports.appointment = async (req, res) => {
   console.log(req.body);
-  const { formValues } = req.body;
+  const { newtime } = req.body;
   try {
     const reserv = await new book({
-      appointmentDate: formValues.appointmentDate,
-      Telephone: formValues.Telephone,
+      appointmentDate: newtime,
       Doctor: req.body.doctorId,
       Patient: req.body.userId,
     }).save();
@@ -34,6 +33,21 @@ exports.getApoitmentByDoctor = async (req, res) => {
     return res.status(400).json({ error });
   }
 };
+
+
+exports.getApoitment = async (req, res) => {
+  console.log(req.params);
+
+  try {
+    
+      const getApoit = await book.find().populate(["Doctor","Patient"]).exec()
+      
+      res.json(getApoit)
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({ error });
+  }
+};
 exports.getAcceptedByDoctor = async (req, res) => {
   console.log(req.params);
 
@@ -48,13 +62,17 @@ exports.getAcceptedByDoctor = async (req, res) => {
   }
 };
 
+
+
+
+
 exports.acceptApointments = async(req,res) =>{
 try {
   console.log(req.params.id)
   const updateBook = await book.findOneAndUpdate({Patient:req.params.id},{appointmentStatus:"accepted"},{new:true}).exec()
   res.json(updateBook) 
   twilio.messages.create({
-    from:"+16062689863",
+    from:"+19893598756",
     to: "+21650963367",
     body:"your appointment has benn accepted "
   }).then((res)=> console.log('message sent ')).catch((err)=>{console.log(err)})

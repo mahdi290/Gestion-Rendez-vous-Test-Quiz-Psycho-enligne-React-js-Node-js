@@ -139,12 +139,28 @@ const doctorSchema = new mongoose.Schema({
     },
 
     photo :{
-
+        
         type : String,
     },
 
-    
-    
+    isAdmin:{
+        type:Boolean,
+        default:false
+    },
+    transcipt : {
+        type: String,
+        required: true,
+    },
+    isverified:{
+        type: Boolean, 
+        default: false ,
+    },
+    accountStatus: {
+        type: String,
+        default: "pending",
+        enum: ["pending", "cancelled","accepted"],
+        required: true,
+      },
     
 } ,{
     timesstamps :true
